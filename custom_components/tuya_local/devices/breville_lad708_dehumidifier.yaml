@@ -104,7 +104,7 @@ entities:
         type: boolean
         name: sensor
   - entity: binary_sensor
-    translation_key: replace_filter
+    name: Filter Replacement
     category: diagnostic
     dps:
       - id: 106
