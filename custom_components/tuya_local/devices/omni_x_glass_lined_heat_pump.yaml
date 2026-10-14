@@ -14,8 +14,8 @@ products:
 # Diagnostic temperature/frequency units are confirmed by the Tuya model.
 # DP2/DP3 Celsius interpretation should be checked against the display.
 # The 15–75 C DP range is a protocol limit, not a recommended operating range.
-# DP4 supplies water-heater modes; DP1 power is a separate switch.
-# Keep the power switch off the thermostat card to avoid accidental shutdown.
+# The water-heater entity combines DP1 enable with DP4 heating mode.
+# A separate DP1 Power switch is retained for existing automations.
 entities:
   - entity: water_heater
     dps:
@@ -34,16 +34,25 @@ entities:
         name: current_temperature
         unit: C
         readonly: true
-      - id: 4
-        type: string
+      - id: 1
+        type: boolean
         name: operation_mode
         mapping:
-          - dps_val: standard
-            value: Standard
-          - dps_val: eco
-            value: Quiet
-          - dps_val: boot
-            value: Boost
+          - dps_val: false
+            value: "off"
+          - dps_val: true
+            constraint: work_mode
+            conditions:
+              - dps_val: standard
+                value: Standard
+              - dps_val: eco
+                value: Quiet
+              - dps_val: boot
+                value: Boost
+      - id: 4
+        type: string
+        name: work_mode
+        hidden: true
   - entity: switch
     name: Power
     icon: "mdi:power"
