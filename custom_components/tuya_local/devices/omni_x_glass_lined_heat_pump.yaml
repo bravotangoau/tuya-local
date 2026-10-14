@@ -1,0 +1,260 @@
+name: Omni X Glass Lined Heat Pump
+products:
+  - id: tp772eosva4ine2g
+    manufacturer: Omni X Technologies
+    model: 320L OMNI Glass Lined Heat Pump# Manufacturer: Omni X Technologies
+# Model: 320L OMNI Glass Lined Heat Pump
+# Manufacturer website: https://www.omnixtechnologies.com.au/
+# Based on the owner's actual Tuya property snapshot, 14 October 2026.
+# Tuya modelId: e1n4u13c (not the product ID).
+# Full DP specification supplied by the owner on 14 October 2026.
+# All integer DPs use scale 0 / step 1: raw values need no division.
+# Writable: DP1 enable, DP2 setpoint, DP4 mode. All others are read-only.
+# Diagnostic temperature/frequency units are confirmed by the Tuya model.
+# DP2/DP3 Celsius interpretation should be checked against the display.
+# The 15–75 C DP range is a protocol limit, not a recommended operating range.
+# DP4 supplies water-heater modes; DP1 power is a separate switch.
+# Keep the power switch off the thermostat card to avoid accidental shutdown.
+entities:
+  - entity: water_heater
+    dps:
+      - id: 2
+        type: integer
+        name: temperature
+        unit: C
+        range:
+          min: 15
+          max: 60
+      - id: 3
+        type: integer
+        range:
+          min: -40
+          max: 150
+        name: current_temperature
+        unit: C
+        readonly: true
+      - id: 4
+        type: string
+        name: operation_mode
+        mapping:
+          - dps_val: standard
+            value: Standard
+          - dps_val: eco
+            value: Quiet
+          - dps_val: boot
+            value: Boost
+  - entity: switch
+    name: Power
+    icon: "mdi:power"
+    dps:
+      - id: 1
+        type: boolean
+        name: switch
+  # Retain the original target sensor for monitoring/history.
+  - entity: sensor
+    name: Target temperature
+    class: temperature
+    dps:
+      - id: 2
+        type: integer
+        range:
+          min: 15
+          max: 60
+        name: sensor
+        unit: C
+        class: measurement
+        readonly: true
+  - entity: sensor
+    name: Work mode
+    class: enum
+    icon: "mdi:water-boiler"
+    dps:
+      - id: 4
+        type: string
+        name: sensor
+        readonly: true
+        mapping:
+          - dps_val: standard
+            value: Standard
+          - dps_val: eco
+            value: Quiet
+          - dps_val: boot
+            value: Boost
+  - entity: select
+    name: Heating mode
+    icon: "mdi:water-boiler"
+    dps:
+      - id: 4
+        type: string
+        name: option
+        mapping:
+          - dps_val: standard
+            value: Standard
+          - dps_val: eco
+            value: Quiet
+          - dps_val: boot
+            value: Boost
+  - entity: binary_sensor
+    name: Fault
+    class: problem
+    category: diagnostic
+    dps:
+      - id: 21
+        type: bitfield
+        name: sensor
+        readonly: true
+        mapping:
+          - dps_val: 0
+            value: false
+          - value: true
+      # Bitmap bits 0–21, in the manufacturer-supplied order:
+      # flowswitch, dischargehigh, HP, LP, commerr, outcoil, outdoor,
+      # discharge, watertank, suction, waterout, returnwater, outwaterhigh,
+      # outwaterlow, phasenoconnect, phasewrong, swsetwrong, boarderr,
+      # suntank, frqfault, DCfanfault, outdoorlow.
+      - id: 21
+        type: bitfield
+        name: fault_code
+        readonly: true
+  - entity: sensor
+    name: Coil temperature
+    class: temperature
+    category: diagnostic
+    dps:
+      - id: 101
+        type: integer
+        range:
+          min: -40
+          max: 150
+        name: sensor
+        unit: C
+        class: measurement
+        readonly: true
+  - entity: sensor
+    name: Ambient temperature
+    class: temperature
+    category: diagnostic
+    dps:
+      - id: 102
+        type: integer
+        range:
+          min: -40
+          max: 150
+        name: sensor
+        unit: C
+        class: measurement
+        readonly: true
+  - entity: sensor
+    name: Return air temperature
+    class: temperature
+    category: diagnostic
+    dps:
+      - id: 103
+        type: integer
+        range:
+          min: -40
+          max: 150
+        name: sensor
+        unit: C
+        class: measurement
+        readonly: true
+  - entity: sensor
+    name: Exhaust temperature
+    class: temperature
+    category: diagnostic
+    dps:
+      - id: 104
+        type: integer
+        range:
+          min: -40
+          max: 150
+        name: sensor
+        unit: C
+        class: measurement
+        readonly: true
+  - entity: sensor
+    name: Tank temperature
+    class: temperature
+    dps:
+      - id: 105
+        type: integer
+        range:
+          min: -40
+          max: 150
+        name: sensor
+        unit: C
+        class: measurement
+        readonly: true
+  - entity: sensor
+    name: Return water temperature
+    class: temperature
+    category: diagnostic
+    dps:
+      - id: 106
+        type: integer
+        range:
+          min: -40
+          max: 150
+        name: sensor
+        unit: C
+        class: measurement
+        readonly: true
+  - entity: sensor
+    name: Main valve opening
+    icon: "mdi:valve"
+    category: diagnostic
+    dps:
+      - id: 107
+        type: integer
+        range:
+          min: 0
+          max: 520
+        name: sensor
+        unit: P
+        class: measurement
+        readonly: true
+  - entity: sensor
+    name: Compressor frequency
+    class: frequency
+    category: diagnostic
+    dps:
+      - id: 108
+        type: integer
+        range:
+          min: 0
+          max: 150
+        name: sensor
+        unit: Hz
+        class: measurement
+        readonly: true
+  - entity: binary_sensor
+    name: Four-way valve
+    category: diagnostic
+    dps:
+      - id: 109
+        type: boolean
+        name: sensor
+        readonly: true
+  - entity: sensor
+    name: Fan frequency
+    class: frequency
+    category: diagnostic
+    dps:
+      - id: 110
+        type: integer
+        range:
+          min: 0
+          max: 150
+        name: sensor
+        unit: Hz
+        class: measurement
+        readonly: true
+  - entity: binary_sensor
+    name: Electric heating element
+    class: running
+    category: diagnostic
+    dps:
+      - id: 113
+        type: boolean
+        name: sensor
+        readonly: true
