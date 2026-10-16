@@ -1,0 +1,89 @@
+# Tuya WL-IRT Wi-Fi IR Remote with Temperature and Humidity
+#
+# Product ID: 21ikckanjh9n5tzt
+# Tuya Model ID: 00000474ab
+#
+# This configuration provides local monitoring of temperature,
+# humidity, battery status, charging status and power mode.
+#
+# The device also supports infrared transmission and learning
+# through Tuya DPS 201 and 202, but these DPS are not reported
+# in the local device state. IR functionality is therefore
+# intentionally excluded from this configuration.
+#
+# DP5 (temperature unit selection) is also excluded because
+# it is not reported locally. When configured as optional,
+# the select entity reverts to "unknown" after selection.
+#
+# Confirmed local DPS:
+#   1  - Current temperature (scale 10)
+#   2  - Relative humidity (%)
+#   3  - Battery state (low / medium / high)
+#   4  - Battery percentage (%)
+#   8  - Charging state
+#   20 - Power mode (usb_power / battery_power)
+#
+# Tested with the make-all/tuya-local Home Assistant integration.
+
+name: IR remote with temperature and humidity
+
+products:
+  - id: 21ikckanjh9n5tzt
+    manufacturer: Tuya
+    model: WL-IRT
+
+entities:
+  # Temperature in degrees Celsius.
+  # Tuya reports temperature multiplied by 10 (e.g. 185 = 18.5°C).
+  - entity: sensor
+    class: temperature
+    dps:
+      - id: 1
+        type: integer
+        name: sensor
+        class: measurement
+        mapping:
+          - scale: 10
+
+  # Relative humidity percentage.
+  - entity: sensor
+    class: humidity
+    dps:
+      - id: 2
+        type: integer
+        name: sensor
+        unit: "%"
+        class: measurement
+
+  # Battery percentage and battery state.
+  - entity: sensor
+    class: battery
+    category: diagnostic
+    dps:
+      - id: 4
+        type: integer
+        name: sensor
+        unit: "%"
+        class: measurement
+      - id: 3
+        type: string
+        name: battery_state
+
+  # Battery charging status.
+  - entity: binary_sensor
+    class: battery_charging
+    category: diagnostic
+    dps:
+      - id: 8
+        type: boolean
+        name: sensor
+
+  # Current power source: USB or battery.
+  - entity: sensor
+    name: Power mode
+    category: diagnostic
+    dps:
+      - id: 20
+        type: string
+        name: sensor
+        
